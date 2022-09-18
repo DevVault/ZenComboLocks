@@ -10,17 +10,17 @@ Instant open works like the Code Lock mod - press F and the door/gate will open 
 
 The slow option simulates entering the code - so you need to cycle through a few "pretend" combination dial actions before the door will open (for a more authentic hardcore DayZ experience). Servers can adjust how many cycles are required, by default it's set to 1 cycle per digit on the lock.
 
-This mod also includes a few other optional features, such as displaying the code on the screen while dialing, interacting with locks & gates from anywhere on the object, it adds several new combination locks (with up to 10 digits), and a new raiding option using a Bolt Cutter tool to break the locks. These features can be turned on or off based on the server config.
+This mod also includes a few other optional features, such as displaying the code on the screen while dialing, interacting with locks & gates from anywhere on the object, it adds several new combination locks (with up to 9 digits), and a new raiding option using a Bolt Cutter tool to break the locks. These features can be turned on or off based on the server config.
 
 Here is a video explaining the core features of the mod as at the time of release:
 
-###
+https://youtu.be/fhJb1UWMCeI
 
 I also included a stringtable so translations should work for all languages (although some translations might be inaccurate as I used an automatic translation tool).
 
 Please report any bugs or mistranslations and I'll fix them ASAP - or feel free to fix them yourself and repack, it's open source (more info below).
 
-Note: This mod may conflict with other mods that either modify combination lock behaviour or fence behaviour (especially basebuilding mods). I can make no guarantees for compatability with other mods and don't have time to make it work with them all.
+Note: This mod may conflict with other mods that either modify combination lock behaviour or fence behaviour (especially base-building mods). I can make no guarantees for compatibility with other mods and don't have time to make it work with them all.
 
 Known Compatibility:
 - CodeLock: Seems fully compatible.
