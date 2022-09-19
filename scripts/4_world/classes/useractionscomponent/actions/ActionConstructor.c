@@ -12,7 +12,7 @@ modded class ActionConstructor
 
         // Vanilla combo lock action overrides
         actions.Insert(Zen_ActionDialCombinationLockOnTarget);
-        actions.Insert(Zen_ActionNextCombinationLockDialOnTarget)
+        actions.Insert(Zen_ActionNextCombinationLockDialOnTarget);
 
         // Fence interact anywhere actions
         actions.Insert(Zen_ActionOpenComboLockFence);

@@ -25,7 +25,6 @@ class ZenComboLocksConfig
 				if (ConfigVersion != CONFIG_VERSION)
 				{
 					JsonFileLoader<ZenComboLocksConfig>.JsonSaveFile(zenModFolder + zenConfigName + "_old", this);
-					ConfigVersion = CONFIG_VERSION;
 				}
 				else
 				{

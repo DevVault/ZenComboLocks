@@ -37,10 +37,10 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 			return false;
 
 		// Check if player is looking at a fence containing a combo lock
-		CombinationLock lock = ZenComboLocksHelper.GetCombinationLock(target.GetObject());
+		CombinationLock lock = CombinationLock.Cast(ZenComboLocksHelper.GetCombinationLock(target.GetObject()));
 
 		// If we haven't found a gate with a combo lock or gate is open, stop here.
-		if (!lock || ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent())
+		if (!lock || ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent()))
 			return false;
 
 		// If client has not received lock perms, don't display action yet

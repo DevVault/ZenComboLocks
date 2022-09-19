@@ -2,7 +2,7 @@
 class ZenComboLocksHelper
 {
 	// Check if the given object is a door and it's open
-	static bool IsOpen(EntityAI doorGateThingy)
+	static bool IsOpen(Object doorGateThingy)
 	{
 		if (!doorGateThingy)
 			return false;
@@ -27,7 +27,7 @@ class ZenComboLocksHelper
 	}
 
 	// Open the given door object
-	static void Open(EntityAI doorGateThingy)
+	static void Open(Object doorGateThingy)
 	{
 		if (!doorGateThingy)
 			return;
@@ -52,7 +52,7 @@ class ZenComboLocksHelper
 	}
 
 	// Gets the combination lock from the given door object
-	static CombinationLock GetCombinationLock(EntityAI doorGateThingy)
+	static CombinationLock GetCombinationLock(Object doorGateThingy)
 	{
 		if (!doorGateThingy)
 			return NULL;
