@@ -49,11 +49,6 @@ class Zen_ActionManageCombinationLockOnTarget : ActionInteractBase
 	// Check client-side conditions
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
-		// BaseBuildingPlus is difficult to get my lock management to work with, so I just don't bother for now
-		#ifdef BBP
-		return false;
-		#endif
-
 		// If there is no target object or we're an admin, stop here
 		if (!target.GetObject() || (player.IsAdminZCBL() && !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen))
 			return false;

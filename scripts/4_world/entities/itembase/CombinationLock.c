@@ -376,6 +376,18 @@ modded class CombinationLock
 		return false;
 	}
 
+	// This is for BBP compatibility (doesn't work for BF)
+	override void UnlockServer(EntityAI player, EntityAI parent)
+	{
+		if (parent && parent.IsKindOf("BBP_WALL_BASE"))
+		{
+			UnlockServerZen(player, parent);
+			return;
+		}
+
+		super.UnlockServer(player, parent);
+	};
+
 	// This is a custom version of UnlockServer(), because other mods like BF change this function and it breaks my mod's compatibility with them...
 	void UnlockServerZen(EntityAI player, EntityAI parent)
 	{

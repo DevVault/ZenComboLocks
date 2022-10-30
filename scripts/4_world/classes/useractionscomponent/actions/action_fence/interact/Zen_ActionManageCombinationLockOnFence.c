@@ -49,17 +49,16 @@ class Zen_ActionManageCombinationLockOnFence : ActionInteractBase
 	// Check client-side conditions
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
-		// BaseBuildingPlus is difficult to get my lock management to work with, so I just don't bother for now
-		#ifdef BBP
-		return false;
-		#endif
-
 		// If interact anywhere is disabled, do not show manage lock action on fence
 		if (!GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 			return false;
 
 		// If there is no target object or we're an admin, stop here
 		if (!target.GetObject() || (player.IsAdminZCBL() && !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen))
+			return false;
+
+		// BaseBuildingPlus is difficult to get my lock management to work with, so I just don't bother for now
+		if (target.GetObject().IsKindOf("BBP_WALL_BASE"))
 			return false;
 
 		// Check if player is looking at fence

@@ -56,7 +56,7 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 			return false;
 
 		// Check action condition client (player has client permission & is not managing the lock)
-		return lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient();
+		return lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient() && lock.IsLocked();
 	}
 
 	// Called on server when each dial action finishes (0.5 secs apart)

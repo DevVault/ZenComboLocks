@@ -49,7 +49,7 @@ class Zen_ActionOpenComboLockInstantFence : ActionInteractBase
 		construction_action_data.SetCombinationLock(lock);
 
 		// If we've made it this far, check if client has permission to open
-		return (GetZenComboLocksConfig().ClientSyncConfig.InstantOpen && lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient()) || player.IsAdminZCBL();
+		return lock.IsLocked() && (GetZenComboLocksConfig().ClientSyncConfig.InstantOpen && lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient()) || player.IsAdminZCBL();
 	}
 
 	// Do action
