@@ -2,8 +2,6 @@ class CfgPatches
 {
     class ZenComboLocks
     {
-        units[]={};
-        weapons[]={};
         requiredVersion=0.1;
         requiredAddons[]=
         {
@@ -43,6 +41,7 @@ class CfgMods
                 value="";
                 files[]=
                 {
+					"ZenComboLocks/scripts/common",
                     "ZenComboLocks/Scripts/3_Game"
                 };
             };
@@ -51,6 +50,7 @@ class CfgMods
                 value="";
                 files[]=
                 {
+					"ZenComboLocks/scripts/common",
                     "ZenComboLocks/Scripts/4_World"
                 };
             };
@@ -59,6 +59,7 @@ class CfgMods
                 value="";
                 files[]=
                 {
+					"ZenComboLocks/scripts/common",
                     "ZenComboLocks/Scripts/5_Mission"
                 };
             };

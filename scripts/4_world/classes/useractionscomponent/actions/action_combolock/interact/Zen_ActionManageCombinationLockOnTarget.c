@@ -66,7 +66,7 @@ class Zen_ActionManageCombinationLockOnTarget : ActionInteractBase
 
 		ConstructionActionData construction_action_data = player.GetConstructionActionData();
 		construction_action_data.SetCombinationLock(lock);
-		return !ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent());
+		return !ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent()) && lock.IsPermittedToOpen(player);
 	}
 
 	// Do action

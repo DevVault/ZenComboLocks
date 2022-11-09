@@ -75,7 +75,7 @@ class Zen_ActionManageCombinationLockOnFence : ActionInteractBase
 		// If we've found a combination lock, check that we have permission to use "manage" lock action
 		ConstructionActionData construction_action_data = player.GetConstructionActionData();
 		construction_action_data.SetCombinationLock(lock);
-		return !ZenComboLocksHelper.IsOpen(target.GetObject());
+		return !ZenComboLocksHelper.IsOpen(target.GetObject()) && lock.IsPermittedToOpen(player);
 	}
 
 	// Do action (client-side only)
