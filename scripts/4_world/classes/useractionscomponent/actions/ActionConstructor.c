@@ -7,8 +7,10 @@ modded class ActionConstructor
 
         // Custom combo lock actions
         actions.Insert(Zen_ActionOpenComboLock);
+        actions.Insert(Zen_ActionRemoveComboLock);
         actions.Insert(Zen_ActionOpenComboLockInstant);
         actions.Insert(Zen_ActionManageCombinationLockOnTarget);
+        actions.Insert(Zen_ActionRemoveCombinationLockOnFence);
 
         // Vanilla combo lock action overrides
         actions.Insert(Zen_ActionDialCombinationLockOnTarget);

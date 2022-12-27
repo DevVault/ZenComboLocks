@@ -6,7 +6,7 @@ class Zen_ActionNextCombinationLockDialOnFence : Zen_ActionNextCombinationLockDi
 		if (!target.GetObject())
 			return false;
 
-		// If BBP, stop here
+		// If BBP, stop here due to compatibility issues
 		if (target.GetObject().IsKindOf("BBP_WALL_BASE"))
 			return false;
 
@@ -30,7 +30,7 @@ class Zen_ActionNextCombinationLockDialOnFence : Zen_ActionNextCombinationLockDi
 
 			// If player owns this lock or is a guest, hide the dial action unless they've selected Manage Lock
 			if (lock.IsPermittedToOpen(player))
-				return GetGame().IsDedicatedServer() || lock.IsManagingLockClient();
+				return GetGame().IsDedicatedServer() || (lock.IsManagingLockClient() && !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode);
 
 			// Player is not an owner of this combo lock - let them dial the lock as normal
 			return true;

@@ -1,38 +1,25 @@
-#ifdef BuildingFort_Mod_1A
-modded class BF_DoorBarricade
+#ifdef Cabin_Mod_RaGed
+modded class Prefab_Cabin
 {
-	// Return whether or not this fence can be opened
-	override bool CanOpenFence()
+	override void CloseCabinFence()
 	{
-		if (super.CanOpenFence())
-			return true;
+		super.CloseCabinFence();
 
-		if (HasHinges() && !IsOpened() && IsLocked())
-		{
-			if (GetGame().IsClient())
-			{
-				return GetCombinationLock() && GetCombinationLock().IsPermittedToOpen();
-			}
-		}
-
-		return false;
-	}
-
-	override void CloseFence()
-	{
-		super.CloseFence();
-
-		// Lock combination lock if it is not locked onto the door (ie. door owner/guest has unlocked lock, but not taken it off)
 		if (GetCombinationLock() && !GetCombinationLock().IsLocked())
 		{
 			GetCombinationLock().LockServer(this);
 		}
-	};
+	}
 
-	// Set actions
 	override void SetActions()
 	{
 		super.SetActions();
+
+		// Remove combo lock actions
+		RemoveAction(ActionDialCombinationLockOnCabin);
+		RemoveAction(ActionNextCombinationLockDialOnCabin);
+
+		// Add my combo lock actions
 		AddAction(Zen_ActionNextCombinationLockDialOnFence);
 		AddAction(Zen_ActionRemoveComboLock);
 		AddAction(Zen_ActionOpenComboLockFence);

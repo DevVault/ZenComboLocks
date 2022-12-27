@@ -43,6 +43,8 @@ class Zen_ActionAdminCombinationLockOnFence : ActionContinuousBase
 		if (!target.GetObject())
 			return false;
 
+
+
 		// If player does not have admin authority, stop here
 		if (!player.IsAdminZCBL() || !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen)
 			return false;

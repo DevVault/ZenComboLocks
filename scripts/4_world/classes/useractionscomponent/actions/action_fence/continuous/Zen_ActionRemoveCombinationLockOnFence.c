@@ -1,12 +1,12 @@
-class Zen_ActionOpenComboLockFence : ActionContinuousBase
+class Zen_ActionRemoveCombinationLockOnFence : ActionContinuousBase
 {
-	void Zen_ActionOpenComboLockFence()
+	void Zen_ActionRemoveCombinationLockOnFence()
 	{
 		m_CallbackClass = Zen_ActionOpenComboLockCB;
 		m_CommandUID = DayZPlayerConstants.CMD_ACTIONMOD_OPENITEM;
 		m_CommandUIDProne = DayZPlayerConstants.CMD_ACTIONMOD_OPENITEM;
 		m_SpecialtyWeight = UASoftSkillsWeight.PRECISE_LOW;
-		m_Text = "#open";
+		m_Text = "#STR_ZenRemoveLock";
 	}
 
 	override void CreateConditionComponents()
@@ -28,12 +28,12 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 	// Check both client & server-side action requirements
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
-		// If there is no object, stop here
-		if (!target.GetObject())
+		// If there is no object or we're holding something, stop here
+		if (!target.GetObject() || item)
 			return false;
 
 		// If interact anywhere is enabled, stop here as that action is used instead
-		if (GetZenComboLocksConfig().ClientSyncConfig.InstantOpen || !GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
+		if (!GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 			return false;
 
 		// Check if player is looking at a fence containing a combo lock
@@ -44,7 +44,11 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 			return false;
 
 		// If client has not received lock perms, don't display action yet
-		if (!lock.HasReceivedClientsidePerms())
+		if (!lock.HasReceivedClientsidePerms() || !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode)
+			return false;
+
+		// If we're not managing the lock, stop here
+		if (GetGame().IsClient() && !lock.IsManagingLockClient())
 			return false;
 
 		// Set construction action data for the player (referenced in other actions related to combo lock)
@@ -55,17 +59,13 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 		if (player.IsAdminZCBL())
 			return false;
 
-		// Check action condition client (player has client permission & is not managing the lock)
-		return lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient() && lock.IsLocked();
+		// Check action condition client (player has client permission & is managing the lock)
+		return lock.IsPermittedToOpen(player) && !lock.IsTakeable();
 	}
 
 	// Called on server when each dial action finishes (0.5 secs apart)
 	override void OnFinishProgressServer(ActionData action_data)
 	{
-		// If instant open is allowed, this action is redundant
-		if (GetZenComboLocksConfig().ClientSyncConfig.InstantOpen)
-			return;
-
 		// Check that player identity exists
 		if (!action_data.m_Player || !action_data.m_Player.GetIdentity())
 			return;
@@ -79,18 +79,15 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 			return;
 
 		// Check permission
-		if (lock.IsLockedOnGate() && lock.IsPermittedToOpen(action_data.m_Player))
+		if (lock.IsLockedOnGate() && lock.IsLocked() && lock.IsPermittedToOpen(action_data.m_Player))
 		{
 			lock.IncreaseSimulatedDialChanges();
 
 			if (lock.GetSimulatedDialChangeCount() >= (lock.GetLockDigits() * GetZenComboLocksConfig().ServerConfig.DigitMultiplier))
 			{
-				// Open fence
-				ZenComboLocksHelper.Open(lock.GetHierarchyParent());
-
-				// Unlock lock if enabled in config
-				if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
-					lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
+				// Open lock
+				EntityAI target_entity = EntityAI.Cast(action_data.m_Target.GetObject());
+				lock.UnlockServerZen(action_data.m_Player, target_entity);
 			}
 		}
 	}
@@ -109,5 +106,21 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 		// Reset simulated dial changes
 		if (lock)
 			lock.ResetSimulatedDialChanges();
+	}
+
+	// Do action (client-side only)
+	override void OnEndClient(ActionData action_data)
+	{
+		super.OnEndClient(action_data);
+
+		// Get combo lock
+		CombinationLock combination_lock = ZenComboLocksHelper.GetCombinationLock(action_data.m_Target.GetObject());
+
+		// If combo lock exists, handle management
+		if (combination_lock)
+		{
+			// Set managing lock to false after door has been closed
+			combination_lock.SetManagingLockClient(false);
+		}
 	}
 }

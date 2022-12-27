@@ -1,3 +1,11 @@
+modded class ActionDialCombinationLockOnTargetCB : ActionContinuousBaseCB
+{
+	override void CreateActionComponent()
+	{
+		m_ActionData.m_ActionComponent = new CAContinuousRepeat(GetZenComboLocksConfig().ClientSyncConfig.DialTime);
+	}
+}
+
 class Zen_ActionDialCombinationLockOnTarget : ActionContinuousBase
 {
 	void Zen_ActionDialCombinationLockOnTarget()
@@ -53,7 +61,7 @@ class Zen_ActionDialCombinationLockOnTarget : ActionContinuousBase
 		construction_action_data.SetCombinationLock(lock);
 
 		// Don't display combo dial if client has open perms and is not managing the lock
-		return !lock.IsPermittedToOpen(player) || GetGame().IsDedicatedServer() || lock.IsManagingLockClient();
+		return !lock.IsPermittedToOpen(player) || GetGame().IsDedicatedServer() || (lock.IsManagingLockClient() && !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode);
 	}
 
 	// From vanilla action

@@ -1,4 +1,12 @@
 // Simple vanilla override - no need for custom action
+modded class ActionDialCombinationLockCB : ActionContinuousBaseCB
+{
+	override void CreateActionComponent()
+	{
+		m_ActionData.m_ActionComponent = new CAContinuousRepeat(GetZenComboLocksConfig().ClientSyncConfig.DialTime);
+	}
+}
+
 modded class ActionDialCombinationLock : ActionContinuousBase
 {
 	// CLIENT-SIDE: Display code digit if enabled in config
@@ -56,7 +64,7 @@ modded class ActionCloseFence
 			{
 				if (!lock.IsLocked())
 				{
-					lock.LockServer(action_data.m_Target.GetObject());
+					lock.LockServer(EntityAI.Cast(action_data.m_Target.GetObject()));
 				}
 			}
 		}

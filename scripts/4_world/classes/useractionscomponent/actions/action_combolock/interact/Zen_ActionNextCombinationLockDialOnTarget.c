@@ -42,7 +42,7 @@ class Zen_ActionNextCombinationLockDialOnTarget : ActionInteractBase
 
 		// If player owns this lock is a guest, hide the dial action unless they've selected Manage Lock
 		if (lock.IsPermittedToOpen(player))
-			return GetGame().IsDedicatedServer() || lock.IsManagingLockClient();
+			return GetGame().IsDedicatedServer() || (lock.IsManagingLockClient() && !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode);
 
 		// Player is not an owner of this combo lock - let them dial the lock as normal
 		return true;

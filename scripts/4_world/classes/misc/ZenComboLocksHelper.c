@@ -23,6 +23,15 @@ class ZenComboLocksHelper
 		}
 		#endif
 
+		// Check cabin
+		#ifdef Cabin_Mod_RaGed
+		Prefab_Cabin cabin = Prefab_Cabin.Cast(doorGateThingy);
+		if (cabin)
+		{
+			return cabin.IsOpened();
+		}
+		#endif
+
 		return false;
 	}
 
@@ -49,6 +58,16 @@ class ZenComboLocksHelper
 			return;
 		}
 		#endif
+
+		// Check cabin
+		#ifdef Cabin_Mod_RaGed
+		Prefab_Cabin cabin = Prefab_Cabin.Cast(doorGateThingy);
+		if (cabin)
+		{
+			cabin.OpenCabinFence();
+			return;
+		}
+		#endif
 	}
 
 	// Gets the combination lock from the given door object
@@ -70,6 +89,15 @@ class ZenComboLocksHelper
 		if (bf_door)
 		{
 			return bf_door.GetCombinationLock();
+		}
+		#endif
+
+		#ifdef Cabin_Mod_RaGed
+		// Check cabin
+		Prefab_Cabin cabin = Prefab_Cabin.Cast(doorGateThingy);
+		if (cabin)
+		{
+			return cabin.GetCombinationLock();
 		}
 		#endif
 

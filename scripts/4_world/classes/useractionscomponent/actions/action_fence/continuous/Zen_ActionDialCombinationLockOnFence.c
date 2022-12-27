@@ -7,7 +7,7 @@ class Zen_ActionDialCombinationLockOnFence : Zen_ActionDialCombinationLockOnTarg
 		if (!target.GetObject())
 			return false;
 
-		// Check if interact anywhere is enabled
+		// Check if interact anywhere is enabled or the owner can use the RemoveLockWithoutCode action
 		if (!GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 			return false;
 
@@ -25,7 +25,7 @@ class Zen_ActionDialCombinationLockOnFence : Zen_ActionDialCombinationLockOnTarg
 		construction_action_data.SetCombinationLock(lock);
 
 		// Don't display combo dial if client has open perms and is not managing the lock
-		return !lock.IsPermittedToOpen(player) || GetGame().IsDedicatedServer() || lock.IsManagingLockClient();
+		return !lock.IsPermittedToOpen(player) || GetGame().IsDedicatedServer() || (lock.IsManagingLockClient() && !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode);
 	}
 
 	// CLIENT-SIDE: Display code digit if enabled in config

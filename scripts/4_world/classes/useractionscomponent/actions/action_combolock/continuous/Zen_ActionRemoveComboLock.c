@@ -1,20 +1,12 @@
-class Zen_ActionOpenComboLockCB : ActionContinuousBaseCB
+class Zen_ActionRemoveComboLock : ActionContinuousBase
 {
-	override void CreateActionComponent()
-	{
-		m_ActionData.m_ActionComponent = new CAContinuousRepeat(GetZenComboLocksConfig().ClientSyncConfig.DialTime);
-	}
-};
-
-class Zen_ActionOpenComboLock : ActionContinuousBase
-{
-	void Zen_ActionOpenComboLock()
+	void Zen_ActionRemoveComboLock()
 	{
 		m_CallbackClass = Zen_ActionOpenComboLockCB;
 		m_CommandUID = DayZPlayerConstants.CMD_ACTIONMOD_OPENITEM;
 		m_CommandUIDProne = DayZPlayerConstants.CMD_ACTIONMOD_OPENITEM;
 		m_SpecialtyWeight = UASoftSkillsWeight.PRECISE_LOW;
-		m_Text = "#open";
+		m_Text = "#STR_ZenRemoveLock";
 	}
 
 	override void CreateConditionComponents()
@@ -52,7 +44,11 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 			return false;
 
 		// If client has not received lock perms, don't display action
-		if (!lock.HasReceivedClientsidePerms())
+		if (!lock.HasReceivedClientsidePerms() || !GetZenComboLocksConfig().ClientSyncConfig.OwnerCanRemoveLockWithoutCode)
+			return false;
+
+		// If we're not managing the lock, stop here
+		if (GetGame().IsClient() && !lock.IsManagingLockClient())
 			return false;
 
 		// Set construction action data for the player (referenced in other actions related to combo lock on both client & server)
@@ -60,7 +56,7 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 		construction_action_data.SetCombinationLock(lock);
 
 		// Check action condition client (player has client permission & is not managing the lock)
-		return lock.IsPermittedToOpen(player) && !lock.IsManagingLockClient() && !ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent());
+		return lock.IsPermittedToOpen(player) && !ZenComboLocksHelper.IsOpen(lock.GetHierarchyParent()) && !lock.IsTakeable();
 	}
 
 	// Called when each dial action finishes (0.5 secs apart)
@@ -90,12 +86,8 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 			// Open fence if simulated dial count exceeds server config
 			if (lock.GetSimulatedDialChangeCount() >= (lock.GetLockDigits() * GetZenComboLocksConfig().ServerConfig.DigitMultiplier))
 			{
-				EntityAI lockParent = lock.GetHierarchyParent();
-				ZenComboLocksHelper.Open(lockParent);
-
-				// Unlock lock if enabled in config
-				if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
-					lock.UnlockServerZen(action_data.m_Player, lockParent);
+				// Open lock
+				lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
 			}
 		}
 	}
@@ -114,5 +106,21 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 		// Reset simulated dial changes
 		if (lock)
 			lock.ResetSimulatedDialChanges();
+	}
+
+	// Do action (client-side only)
+	override void OnEndClient(ActionData action_data)
+	{
+		super.OnEndClient(action_data);
+
+		// Get combo lock
+		CombinationLock combination_lock = CombinationLock.Cast(action_data.m_Target.GetObject());
+
+		// If combo lock exists, handle management
+		if (combination_lock)
+		{
+			// Set managing lock to false after door has been closed
+			combination_lock.SetManagingLockClient(false);
+		}
 	}
 }

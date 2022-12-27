@@ -78,13 +78,12 @@ class Zen_ActionOpenComboLockInstantFence : ActionInteractBase
 				// If combo lock is locked onto the gate, check if player has permission
 				if (lock.IsLockedOnGate() && lock.IsPermittedToOpen(action_data.m_Player))
 				{
-					// Get fence
-					EntityAI lockParent = lock.GetHierarchyParent();
-					Fence fenceParent = Fence.Cast(lockParent);
-
 					// Open fence
-					if (fenceParent)
-						fenceParent.OpenFence();
+					ZenComboLocksHelper.Open(lock.GetHierarchyParent());
+
+					// Unlock lock if enabled in config
+					if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
+						lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
 				}
 			}
 		}

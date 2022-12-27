@@ -27,7 +27,7 @@ modded class ActionOpenBuildingCore
 		BuildingFortficationsCore bfc = BuildingFortficationsCore.Cast(action_data.m_Target.GetObject());
 		if (bfc)
 		{
-			CombinationLock lock = CombinationLock.Cast(bfc.FindAttachmentBySlotName("Att_CombinationLock"));
+			CombinationLock lock = ZenComboLocksHelper.GetCombinationLock(bfc);
 			if (lock && lock.IsLockedOnGate() && lock.IsPermittedToOpen(action_data.m_Player))
 			{
 				bfc.OpenFence();

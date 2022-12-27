@@ -1,7 +1,7 @@
 class ZenComboLocksConfig
 {
 	// Static constant config version (is NOT saved to json)
-	static const string CONFIG_VERSION = "1";
+	static const string CONFIG_VERSION = "2";
 
 	// Config location
 	private const static string zenModFolder = "$profile:\\Zenarchist\\";
@@ -155,6 +155,8 @@ class ZenComboLocksClientConfig
 	bool InstantOpen = false;
 	bool DismantleWithLock = false;
 	int DisplayDigits = 2; // 0 = none, 1 = single digit, 2 = entire code
+	float DialTime = 0.5;
+	bool OwnerCanRemoveLockWithoutCode = false;
 	ref ZenComboLocksRaidConfig RaidConfig;
 };
 
@@ -162,6 +164,7 @@ class ZenComboLocksClientConfig
 class ZenComboLocksServerConfig
 {
 	bool PrintLogs = true;
+	bool UnlockOnOpen = false;
 	int DigitMultiplier = 1;
 	ref array<string> AdminSteamIDs;
 };

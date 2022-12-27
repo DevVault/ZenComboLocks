@@ -8,6 +8,14 @@ modded class CombinationLock
 	protected bool m_IsManagingLockClient = false;
 	protected int m_LastSimulatedDialChanges = -1;
 
+	override void EOnInit(IEntity other, int extra)
+	{
+		super.EOnInit(other, extra);
+
+		if (GetGame().IsDedicatedServer())
+			GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(CheckLockRestart, 5000, false);
+	};
+
 	// Returns true if the player is currently managing this lock (allows digit change action for removing lock)
 	bool IsManagingLockClient()
 	{
@@ -16,6 +24,15 @@ modded class CombinationLock
 
 		return m_IsManagingLockClient;
 	}
+
+	// Check if lock should be locked
+	void CheckLockRestart()
+	{
+		if (GetHierarchyParent() && GetHierarchyParent().IsInherited(BaseBuildingBase))
+		{
+			LockServer(GetHierarchyParent());
+		};
+	};
 
 	// Set whether or not the player is currently managing this lock (for client-side actions)
 	void SetManagingLockClient(bool b)
@@ -359,11 +376,14 @@ modded class CombinationLock
 	//---------------- </Both> ----------------
 
 	// VANILLA OVERRIDES
+
+	override bool IsLocked()
+	{
+		return super.IsLocked() && !IsTakeable();
+	}
+
 	override bool IsLockedOnGate()
 	{
-		if (super.IsLockedOnGate())
-			return true;
-		
 		if (IsLocked())
 		{
 			#ifdef BuildingFort_Mod_1A
@@ -373,10 +393,10 @@ modded class CombinationLock
 			#endif
 		}
 
-		return false;
+		return super.IsLockedOnGate();
 	}
 
-	// This is for BBP compatibility (doesn't work for BF)
+	// This is for BBP compatibility
 	override void UnlockServer(EntityAI player, EntityAI parent)
 	{
 		if (parent && parent.IsKindOf("BBP_WALL_BASE"))
@@ -388,7 +408,7 @@ modded class CombinationLock
 		super.UnlockServer(player, parent);
 	};
 
-	// This is a custom version of UnlockServer(), because other mods like BF change this function and it breaks my mod's compatibility with them...
+	// This is a custom version of UnlockServer(), because some mods change this function without calling super() and it breaks my mod's compatibility with them
 	void UnlockServerZen(EntityAI player, EntityAI parent)
 	{
 		if (IsLockAttached() && parent)

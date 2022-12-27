@@ -42,3 +42,10 @@ You can repack this mod if you like, and do anything else you want with it for t
 Enjoy!
 
 PS. This mod project started one night when I was playing on my server and thought to myself "man it'd be cool if gates remembered my code, I'll throw a mod together for that real quick." Several weeks later, here it is. When it comes to DayZ modding, never EVER assume something is "simple" or easy!
+
+UPDATE 27/12/22:
+Fixed Building Fortifications not locking combination lock when closing the door.
+Added "UnlockOnOpen" to server config - if enabled, the combo lock will be unlocked and takeable whenever a player opens a door making it vulnerable to thieves and door-campers - it automatically locks back onto the fence when the door is shut.
+Added "OwnerCanRemoveLockWithoutCode" to client sync config - if enabled, the owners and guests of a lock who have put the code in at least once can remove it without inputting the code again.
+Added "DialTime" to client sync config - this sets the action time for dialing on locks. It's set to the vanilla default of 0.5 seconds.
+Added compatibility option for servers running RaGed's Cabin Mod (https://steamcommunity.com/sharedfiles/filedetails/?id=2326103329). To enable this compatibility you need to uncomment the line "#define Cabin_Mod_RaGed" in my mod's common/Define.c and repack the mod.
