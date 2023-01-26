@@ -22,11 +22,13 @@ modded class BF_DoorBarricade
 	{
 		super.CloseFence();
 
+		#ifdef SERVER
 		// Lock combination lock if it is not locked onto the door (ie. door owner/guest has unlocked lock, but not taken it off)
 		if (GetCombinationLock() && !GetCombinationLock().IsLocked())
 		{
-			GetCombinationLock().LockServer(this);
+			GetCombinationLock().LockServer(this, true);
 		}
+		#endif
 	};
 
 	// Set actions

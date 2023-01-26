@@ -20,9 +20,11 @@ modded class Fence
 	{
 		super.CloseFence();
 
+		#ifdef SERVER
 		if (GetCombinationLock() && GetCombinationLock().IsTakeable())
 		{
-			GetCombinationLock().LockServer(this);
+			GetCombinationLock().LockServer(this, true);
 		}
+		#endif
 	}
 };

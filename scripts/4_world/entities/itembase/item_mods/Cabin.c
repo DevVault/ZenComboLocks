@@ -5,10 +5,12 @@ modded class Prefab_Cabin
 	{
 		super.CloseCabinFence();
 
+		#ifdef SERVER
 		if (GetCombinationLock() && !GetCombinationLock().IsLocked())
 		{
-			GetCombinationLock().LockServer(this);
+			GetCombinationLock().LockServer(this, true);
 		}
+		#endif
 	}
 
 	override void SetActions()

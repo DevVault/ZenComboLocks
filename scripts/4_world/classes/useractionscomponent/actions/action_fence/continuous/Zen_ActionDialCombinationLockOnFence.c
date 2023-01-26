@@ -53,7 +53,7 @@ class Zen_ActionDialCombinationLockOnFence : Zen_ActionDialCombinationLockOnTarg
 		ConstructionActionData construction_action_data = action_data.m_Player.GetConstructionActionData();
 		CombinationLock lock = construction_action_data.GetCombinationLock();
 
-		// If lock exists, dial nextn umber
+		// If lock exists, dial next number
 		if (lock)
 		{
 			lock.DialNextNumber();

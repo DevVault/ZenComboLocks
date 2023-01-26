@@ -25,15 +25,6 @@ modded class CombinationLock
 		return m_IsManagingLockClient;
 	}
 
-	// Check if lock should be locked
-	void CheckLockRestart()
-	{
-		if (GetHierarchyParent() && GetHierarchyParent().IsInherited(BaseBuildingBase))
-		{
-			LockServer(GetHierarchyParent());
-		};
-	};
-
 	// Set whether or not the player is currently managing this lock (for client-side actions)
 	void SetManagingLockClient(bool b)
 	{
@@ -115,6 +106,43 @@ modded class CombinationLock
 	protected ref ComboLockData m_ComboLockData = NULL;
 	protected int m_SimulatedDialChanges = 0;
 
+	// Check if lock should be locked
+	void CheckLockRestart()
+	{
+		if (GetHierarchyParent() && GetHierarchyParent().IsInherited(BaseBuildingBase))
+		{
+			LockServer(GetHierarchyParent(), true);
+		};
+	};
+
+	// Lock the... lock.. to the gate
+	void LockTheLockToTheGate()
+	{
+		if (GetHierarchyParent() && (GetHierarchyParent().IsInherited(BaseBuildingBase) || GetHierarchyParent().IsKindOf("BBP_WALL_BASE")))
+		{
+			InventoryLocation inventory_location = new InventoryLocation;
+			GetInventory().GetCurrentInventoryLocation(inventory_location);
+			GetHierarchyParent().GetInventory().SetSlotLock(inventory_location.GetSlot(), true);
+			m_LockActionPerformed = LockAction.LOCKED;
+			SetTakeable(false);
+			Synchronize();
+		}
+	}
+
+	// Unlock the lock from the gate
+	void UnlockTheLockFromTheGate()
+	{
+		if (GetHierarchyParent() && (GetHierarchyParent().IsInherited(BaseBuildingBase) || GetHierarchyParent().IsKindOf("BBP_WALL_BASE")))
+		{
+			InventoryLocation inventory_location = new InventoryLocation;
+			GetInventory().GetCurrentInventoryLocation(inventory_location);
+			GetHierarchyParent().GetInventory().SetSlotLock(inventory_location.GetSlot(), false);
+			m_LockActionPerformed = LockAction.UNLOCKED;
+			SetTakeable(true);
+			Synchronize();
+		}
+	}
+
 	// Reset simulated dial changes
 	void ResetSimulatedDialChanges()
 	{
@@ -131,8 +159,8 @@ modded class CombinationLock
 		else
 			m_LockActionPerformed = LockAction.DIAL_INDEX_CHANGED;
 
-		if (m_SimulatedDialChanges >= GetLockDigits() * GetZenComboLocksConfig().ServerConfig.DigitMultiplier)
-			m_LockActionPerformed = LockAction.UNLOCKED;
+		//if (m_SimulatedDialChanges >= GetLockDigits() * GetZenComboLocksConfig().ServerConfig.DigitMultiplier)
+		//	m_LockActionPerformed = LockAction.UNLOCKED;
 
 		Synchronize();
 	}
@@ -373,17 +401,36 @@ modded class CombinationLock
 
 		return false;
 	}
+
 	//---------------- </Both> ----------------
 
 	// VANILLA OVERRIDES
 
+	// Necessary because I override combination lock behaviour - when a lock is unlocked it stays attached to the fence but is technically unlocked
+	// So we need to lock the combolock slot to the fence whenever a gate is closed/combo lock attached/server restarts and lock is unlocked etc
+	override void LockServer(EntityAI parent, bool ignore_combination = false)
+	{
+		super.LockServer(parent, ignore_combination);
+
+		// Check if we're on a gate/door, if so, lock the combination lock to parent so it can't be taken to hands/inventory
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(LockTheLockToTheGate);
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(LockTheLockToTheGate, 100, false);
+	};
+
 	override bool IsLocked()
 	{
-		return super.IsLocked() && !IsTakeable();
-	}
+		if (IsTakeable())
+			return false;
 
+		return super.IsLocked();
+	};
+
+	// BF compatibility
 	override bool IsLockedOnGate()
 	{
+		if (IsTakeable())
+			return false;
+
 		if (IsLocked())
 		{
 			#ifdef BuildingFort_Mod_1A
@@ -393,31 +440,27 @@ modded class CombinationLock
 			#endif
 		}
 
+		// super just checks if parent is Fence
 		return super.IsLockedOnGate();
 	}
 
-	// This is for BBP compatibility
-	override void UnlockServer(EntityAI player, EntityAI parent)
+	// BBP does not call super, so unfortunately I need to do this. All my custom actions call UnlockServerZen directly, so this is purely for BBP compatibility
+	void UnlockServer(EntityAI player, EntityAI parent)
 	{
-		if (parent && parent.IsKindOf("BBP_WALL_BASE"))
+		if (GetHierarchyParent().IsKindOf("BBP_WALL_BASE"))
 		{
 			UnlockServerZen(player, parent);
 			return;
 		}
 
 		super.UnlockServer(player, parent);
-	};
+	}
 
 	// This is a custom version of UnlockServer(), because some mods change this function without calling super() and it breaks my mod's compatibility with them
 	void UnlockServerZen(EntityAI player, EntityAI parent)
 	{
 		if (IsLockAttached() && parent)
 		{
-			// Unlock combo lock slot
-			InventoryLocation inventory_location = new InventoryLocation;
-			GetInventory().GetCurrentInventoryLocation(inventory_location);
-			parent.GetInventory().SetSlotLock(inventory_location.GetSlot(), false);
-
 			// Check player permissions
 			if (player)
 			{
@@ -447,11 +490,11 @@ modded class CombinationLock
 				}
 			}
 
-
-			m_LockActionPerformed = LockAction.UNLOCKED;
-			SetTakeable(true);
 			Synchronize();
 		}
+
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).Remove(UnlockTheLockFromTheGate);
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(UnlockTheLockFromTheGate, 100, false);
 	}
 
 	// Detect item location changed - ie. attached to a fence or object
@@ -462,7 +505,7 @@ modded class CombinationLock
 
 		if (GetGame().IsDedicatedServer())
 		{
-			if (IsInitialized() && new_owner && new_owner.IsInherited(BaseBuildingBase))
+			if (IsInitialized() && new_owner && (new_owner.IsInherited(BaseBuildingBase) || new_owner.IsKindOf("BBP_WALL_BASE")))
 			{
 				LockServer(new_owner); // Lock combo lock to gate
 
@@ -493,6 +536,8 @@ modded class CombinationLock
 
 		// Save player owner ID & permitted players
 		ctx.Write(m_ComboLockData);
+
+		Print("[ZENCOMBOLOCK] SAVE Code=" + m_CombinationLocked);
 	}
 
 	// Load combo lock permissions
@@ -506,6 +551,7 @@ modded class CombinationLock
 			m_ComboLockData = new ComboLockData;
 		}
 
+		Print("[ZENCOMBOLOCK] LOAD Code=" + m_CombinationLocked);
 		return true;
 	}
 

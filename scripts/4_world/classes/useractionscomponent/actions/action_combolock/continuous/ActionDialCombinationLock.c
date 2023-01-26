@@ -64,7 +64,7 @@ modded class ActionCloseFence
 			{
 				if (!lock.IsLocked())
 				{
-					lock.LockServer(EntityAI.Cast(action_data.m_Target.GetObject()));
+					lock.LockServer(EntityAI.Cast(action_data.m_Target.GetObject()), true);
 				}
 			}
 		}

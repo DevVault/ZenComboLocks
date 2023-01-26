@@ -19,7 +19,7 @@ modded class MissionServer
 			return;
 
 		// Delay sending of client config to avoid spamming new client login along with data from other mods
-		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SendComboLockConfig, 3333, false, player);
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SendComboLockConfig, 3333 + Math.RandomIntInclusive(0, 3333), false, player);
 	}
 
 	// Send combo lock config to player from server
