@@ -536,8 +536,6 @@ modded class CombinationLock
 
 		// Save player owner ID & permitted players
 		ctx.Write(m_ComboLockData);
-
-		Print("[ZENCOMBOLOCK] SAVE Code=" + m_CombinationLocked);
 	}
 
 	// Load combo lock permissions
@@ -551,7 +549,6 @@ modded class CombinationLock
 			m_ComboLockData = new ComboLockData;
 		}
 
-		Print("[ZENCOMBOLOCK] LOAD Code=" + m_CombinationLocked);
 		return true;
 	}
 
