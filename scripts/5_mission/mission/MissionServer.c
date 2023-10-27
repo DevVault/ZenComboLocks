@@ -18,8 +18,7 @@ modded class MissionServer
 		if (!player || !identity) 
 			return;
 
-		// Delay sending of client config to avoid spamming new client login along with data from other mods
-		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SendComboLockConfig, 3333 + Math.RandomIntInclusive(0, 3333), false, player);
+		GetGame().GetCallQueue(CALL_CATEGORY_SYSTEM).CallLater(SendComboLockConfig, 1, false, player);
 	}
 
 	// Send combo lock config to player from server
@@ -29,7 +28,7 @@ modded class MissionServer
 			return;
 
 		// Send client config
-		Param2<ZenComboLocksClientConfig, bool> configParams = new Param2<ZenComboLocksClientConfig, bool>(
+		ref Param2<ref ZenComboLocksClientConfig, bool> configParams = new ref Param2<ref ZenComboLocksClientConfig, bool>(
 			GetZenComboLocksConfig().ClientSyncConfig,
 			GetZenComboLocksConfig().IsAdminZCBL(player.GetIdentity().GetPlainId()));
 		GetRPCManager().SendRPC("RPC_ZCL", "RPC_ReceiveZenComboLocksConfigOnClient", configParams, true, player.GetIdentity());

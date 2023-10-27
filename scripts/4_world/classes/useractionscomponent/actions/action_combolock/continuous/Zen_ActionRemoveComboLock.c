@@ -29,7 +29,7 @@ class Zen_ActionRemoveComboLock : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// If server has enabled instant open or player is an admin, stop here (as Instant action is used instead)
@@ -88,12 +88,13 @@ class Zen_ActionRemoveComboLock : ActionContinuousBase
 			{
 				// Open lock
 				lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " unlocked lock @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}
 
 	// Called when action starts (resets simulated lock dial count)
-	void OnStartServer(ActionData action_data)
+	override void OnStartServer(ActionData action_data)
 	{
 		super.OnStartServer(action_data);
 

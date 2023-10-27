@@ -4,9 +4,9 @@ class ZenComboLockGUI extends Managed
 	static const string LAYOUT_FILE = "ZenComboLocks/data/gui/layouts/ZenComboLocksHUD.layout";
 
 	// Layout components
-	autoptr Widget m_LayoutRoot;
-	autoptr TextWidget m_ComboLockWidget;
-	autoptr WidgetFadeTimer m_FadeTimer;
+	ref Widget m_LayoutRoot;
+	ref TextWidget m_ComboLockWidget;
+	ref WidgetFadeTimer m_FadeTimer;
 
 	// Init widgets
 	void ZenComboLockGUI()
@@ -44,8 +44,13 @@ class ZenComboLockGUI extends Managed
 	// Destroy ZenComboLockGUI object, remove any call queues etc.
 	void ~ZenComboLockGUI()
 	{
+		if (m_FadeTimer && m_FadeTimer.IsRunning())
+			m_FadeTimer.Stop();
+
 		m_ComboLockWidget.Show(false);
 		delete m_ComboLockWidget;
+		delete m_FadeTimer;
+		delete m_LayoutRoot;
 	}
 
 	// Set combo lock display text

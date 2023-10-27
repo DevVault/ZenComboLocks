@@ -1,12 +1,26 @@
 modded class CombinationLock
 {
 	//------------ <Client-side> ------------
-	autoptr ZenComboLockGUI m_ZenComboLockGUI = NULL;
-	protected bool m_RequestedPerms = false;
-	protected bool m_ReceivedPerms = false;
-	protected bool m_HasClientPermission = false;
-	protected bool m_IsManagingLockClient = false;
-	protected int m_LastSimulatedDialChanges = -1;
+	ref ZenComboLockGUI m_ZenComboLockGUI;
+	protected bool m_RequestedPerms;
+	protected bool m_ReceivedPerms;
+	protected bool m_HasClientPermission;
+	protected bool m_IsManagingLockClient;
+	protected int m_LastSimulatedDialChanges;
+
+	void CombinationLock()
+	{
+		m_RequestedPerms = false;
+		m_ReceivedPerms = false;
+		m_HasClientPermission = false;
+		m_IsManagingLockClient = false;
+		m_LastSimulatedDialChanges = -1;
+	}
+
+	void ~CombinationLock()
+	{
+		delete m_ZenComboLockGUI;
+	}
 
 	override void EOnInit(IEntity other, int extra)
 	{
@@ -445,7 +459,7 @@ modded class CombinationLock
 	}
 
 	// BBP does not call super, so unfortunately I need to do this. All my custom actions call UnlockServerZen directly, so this is purely for BBP compatibility
-	void UnlockServer(EntityAI player, EntityAI parent)
+	override void UnlockServer(EntityAI player, EntityAI parent)
 	{
 		if (GetHierarchyParent().IsKindOf("BBP_WALL_BASE"))
 		{

@@ -19,7 +19,7 @@ class Zen_ActionNextCombinationLockDialOnTarget : ActionInteractBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// If BBP, stop here

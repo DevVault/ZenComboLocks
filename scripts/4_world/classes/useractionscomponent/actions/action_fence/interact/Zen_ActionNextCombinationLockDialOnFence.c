@@ -11,7 +11,7 @@ class Zen_ActionNextCombinationLockDialOnFence : Zen_ActionNextCombinationLockDi
 			return false;
 
 		// If interact anywhere is disabled, stop here
-		if (!GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
+		if (!GetZenComboLocksConfig().ClientSyncConfig || !GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 			return false;
 		
 		// Check if player is looking at fence and interact anywhere is enabled

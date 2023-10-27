@@ -22,7 +22,7 @@ class Zen_ActionOpenComboLockInstantFence : ActionInteractBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no target, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// Check if player is looking at fence and interact anywhere is enabled
@@ -65,7 +65,7 @@ class Zen_ActionOpenComboLockInstantFence : ActionInteractBase
 		if (GetZenComboLocksConfig().ClientSyncConfig.InstantOpen || (GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen && action_data.m_Player.IsAdminZCBL()))
 		{
 			// If player doesn't exist, stop here to avoid crashes
-			if (!action_data.m_Player || !action_data.m_Player.GetIdentity())
+			if (!action_data.m_Player || !action_data.m_Player.GetIdentity() || !action_data.m_Player.GetIdentity())
 				return;
 
 			// Get player action construction data & combo lock object
@@ -84,6 +84,8 @@ class Zen_ActionOpenComboLockInstantFence : ActionInteractBase
 					// Unlock lock if enabled in config
 					if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
 						lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
+
+					ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " opened lock @ " + action_data.m_Player.GetPosition());
 				}
 			}
 		}

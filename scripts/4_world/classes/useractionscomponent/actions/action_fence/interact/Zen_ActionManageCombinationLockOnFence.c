@@ -50,7 +50,7 @@ class Zen_ActionManageCombinationLockOnFence : ActionInteractBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If interact anywhere is disabled, do not show manage lock action on fence
-		if (!GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
+		if (!GetZenComboLocksConfig().ClientSyncConfig || !GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 			return false;
 
 		// If there is no target object or we're an admin, stop here

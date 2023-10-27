@@ -3,7 +3,7 @@ modded class ActionDismantlePart
 	override bool DismantleCondition(PlayerBase player, ActionTarget target, ItemBase item, bool camera_check)
 	{
 		// If dismantle with lock is disabled, just return vanilla condition
-		if (!GetZenComboLocksConfig().ClientSyncConfig.DismantleWithLock)
+		if (!GetZenComboLocksConfig().ClientSyncConfig || !GetZenComboLocksConfig().ClientSyncConfig.DismantleWithLock)
 		{
 			return super.DismantleCondition(player, target, item, camera_check);
 		}

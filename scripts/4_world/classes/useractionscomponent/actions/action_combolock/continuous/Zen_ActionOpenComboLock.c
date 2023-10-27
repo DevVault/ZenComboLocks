@@ -37,7 +37,7 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// If server has enabled instant open or player is an admin, stop here (as Instant action is used instead)
@@ -96,12 +96,14 @@ class Zen_ActionOpenComboLock : ActionContinuousBase
 				// Unlock lock if enabled in config
 				if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
 					lock.UnlockServerZen(action_data.m_Player, lockParent);
+
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " opened lock @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}
 
 	// Called when action starts (resets simulated lock dial count)
-	void OnStartServer(ActionData action_data)
+	override void OnStartServer(ActionData action_data)
 	{
 		super.OnStartServer(action_data);
 

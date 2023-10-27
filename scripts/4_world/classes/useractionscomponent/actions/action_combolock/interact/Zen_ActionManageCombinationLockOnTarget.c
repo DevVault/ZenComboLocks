@@ -50,7 +50,7 @@ class Zen_ActionManageCombinationLockOnTarget : ActionInteractBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no target object or we're an admin, stop here
-		if (!target.GetObject() || (player.IsAdminZCBL() && !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen))
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig || (player.IsAdminZCBL() && !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen))
 			return false;
 
 		// Check if player is looking directly at combo lock

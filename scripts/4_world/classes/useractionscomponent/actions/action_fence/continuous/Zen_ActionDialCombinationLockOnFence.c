@@ -4,7 +4,7 @@ class Zen_ActionDialCombinationLockOnFence : Zen_ActionDialCombinationLockOnTarg
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// Check if interact anywhere is enabled or the owner can use the RemoveLockWithoutCode action
@@ -63,6 +63,7 @@ class Zen_ActionDialCombinationLockOnFence : Zen_ActionDialCombinationLockOnTarg
 			{
 				EntityAI target_entity = EntityAI.Cast(action_data.m_Target.GetObject());
 				lock.UnlockServerZen(action_data.m_Player, target_entity);
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " entered pin @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}

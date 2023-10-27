@@ -29,7 +29,7 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// If interact anywhere is enabled, stop here as that action is used instead
@@ -91,12 +91,14 @@ class Zen_ActionOpenComboLockFence : ActionContinuousBase
 				// Unlock lock if enabled in config
 				if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
 					lock.UnlockServerZen(action_data.m_Player, lock.GetHierarchyParent());
+
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " opened lock @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}
 
 	// Called when action starts (resets simulated lock dial count)
-	void OnStartServer(ActionData action_data)
+	override void OnStartServer(ActionData action_data)
 	{
 		super.OnStartServer(action_data);
 

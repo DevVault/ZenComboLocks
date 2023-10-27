@@ -39,7 +39,7 @@ class Zen_ActionRaidComboLockTarget : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// Check raid config is enabled
@@ -73,7 +73,7 @@ class Zen_ActionRaidComboLockTarget : ActionContinuousBase
 		if (!GetZenComboLocksConfig().ClientSyncConfig.RaidConfig.Enabled || !action_data.m_MainItem || action_data.m_MainItem.IsRuined())
 			return;
 
-		if (!action_data.m_Player || !action_data.m_Player.GetIdentity())
+		if (!action_data.m_Player || !action_data.m_Player.GetIdentity() || !action_data.m_Player.GetIdentity())
 			return;
 
 		ConstructionActionData construction_action_data = action_data.m_Player.GetConstructionActionData();
@@ -93,6 +93,7 @@ class Zen_ActionRaidComboLockTarget : ActionContinuousBase
 				lock.GetInventory().DropEntity(InventoryMode.SERVER, lock.GetHierarchyParent(), lock);
 				lock.SetHealth(0);
 				action_data.m_MainItem.SetHealth(action_data.m_MainItem.GetHealth() - raidConfig.DamageTool);
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " destroyed lock with Bolt Cutters @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}
@@ -121,7 +122,7 @@ class Zen_ActionRaidComboLockTarget : ActionContinuousBase
 	}
 
 	// Called when action starts
-	void OnStartServer(ActionData action_data)
+	override void OnStartServer(ActionData action_data)
 	{
 		super.OnStartServer(action_data);
 		m_LastSoundUpdate = 0;

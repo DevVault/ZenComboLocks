@@ -40,10 +40,8 @@ class Zen_ActionAdminCombinationLockOnFence : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no target object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
-
-
 
 		// If player does not have admin authority, stop here
 		if (!player.IsAdminZCBL() || !GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen)
@@ -80,6 +78,7 @@ class Zen_ActionAdminCombinationLockOnFence : ActionContinuousBase
 			// Unlock and drop it
 			lock.UnlockServer(action_data.m_Player, lock.GetHierarchyParent());
 			lock.GetInventory().DropEntity(InventoryMode.SERVER, action_data.m_Player, lock);
+			ZenComboLocksLogger.Log("Admin " + action_data.m_Player.GetIdentity().GetPlainId() + " removed lock @ " + action_data.m_Player.GetPosition());
 		}
 	}
 }

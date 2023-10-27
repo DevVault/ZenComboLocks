@@ -22,7 +22,7 @@ class Zen_ActionOpenComboLockInstant : ActionInteractBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no target, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// Check if player is looking directly at combo lock
@@ -77,6 +77,8 @@ class Zen_ActionOpenComboLockInstant : ActionInteractBase
 					// Unlock lock if enabled in config
 					if (GetZenComboLocksConfig().ServerConfig.UnlockOnOpen)
 						lock.UnlockServerZen(action_data.m_Player, lockParent);
+
+					ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " opened lock @ " + action_data.m_Player.GetPosition());
 				}
 			}
 		}

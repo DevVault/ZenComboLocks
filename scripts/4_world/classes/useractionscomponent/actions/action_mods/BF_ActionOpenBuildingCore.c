@@ -8,7 +8,7 @@ modded class ActionOpenBuildingCore
 			BF_DoorBarricade door = BF_DoorBarricade.Cast(target.GetObject());
 			if (door)
 			{
-				if (door.GetCombinationLock() && door.GetCombinationLock().IsLockedOnGate())
+				if (door.GetCombinationLock() && door.GetCombinationLock().IsLockedOnGate() && GetZenComboLocksConfig().ClientSyncConfig)
 				{
 					return GetZenComboLocksConfig().ClientSyncConfig.InstantOpen;
 				}
@@ -28,9 +28,10 @@ modded class ActionOpenBuildingCore
 		if (bfc)
 		{
 			CombinationLock lock = ZenComboLocksHelper.GetCombinationLock(bfc);
-			if (lock && lock.IsLockedOnGate() && lock.IsPermittedToOpen(action_data.m_Player))
+			if (lock && lock.IsLockedOnGate() && action_data.m_Player.GetIdentity() && lock.IsPermittedToOpen(action_data.m_Player))
 			{
 				bfc.OpenFence();
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " opened lock @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}

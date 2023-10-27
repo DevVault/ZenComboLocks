@@ -77,7 +77,7 @@ class Zen_ActionAdminCombinationLockOnTarget : ActionContinuousBase
 		if (!GetZenComboLocksConfig().ClientSyncConfig.AllowAdminOpen)
 			return;
 
-		if (!action_data.m_Player || !action_data.m_Player.IsAdminZCBL())
+		if (!action_data.m_Player || !action_data.m_Player.GetIdentity() || !action_data.m_Player.IsAdminZCBL())
 			return;
 
 		// Get player action construction data & combo lock object
@@ -90,6 +90,7 @@ class Zen_ActionAdminCombinationLockOnTarget : ActionContinuousBase
 			// Unlock and drop it
 			combination_lock.UnlockServer(action_data.m_Player, combination_lock.GetHierarchyParent());
 			combination_lock.GetInventory().DropEntity(InventoryMode.SERVER, action_data.m_Player, combination_lock);
+			ZenComboLocksLogger.Log("Admin " + action_data.m_Player.GetIdentity().GetPlainId() + " unlocked lock @ " + action_data.m_Player.GetPosition());
 		}
 	}
 }

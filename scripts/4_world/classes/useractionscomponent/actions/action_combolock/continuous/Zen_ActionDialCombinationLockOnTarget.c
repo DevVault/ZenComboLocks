@@ -42,7 +42,7 @@ class Zen_ActionDialCombinationLockOnTarget : ActionContinuousBase
 	override bool ActionCondition(PlayerBase player, ActionTarget target, ItemBase item)
 	{
 		// If there is no object, stop here
-		if (!target.GetObject())
+		if (!target.GetObject() || !GetZenComboLocksConfig().ClientSyncConfig)
 			return false;
 
 		// Check if player is looking directly at combo lock
@@ -79,6 +79,7 @@ class Zen_ActionDialCombinationLockOnTarget : ActionContinuousBase
 			{
 				EntityAI target_entity = EntityAI.Cast(action_data.m_Target.GetObject());
 				combination_lock.UnlockServerZen(action_data.m_Player, target_entity.GetHierarchyParent());
+				ZenComboLocksLogger.Log("Player " + action_data.m_Player.GetIdentity().GetPlainId() + " entered pin @ " + action_data.m_Player.GetPosition());
 			}
 		}
 	}

@@ -11,7 +11,7 @@ modded class ActionCloseBuildingCore : ActionInteractBase
 			if (fence && fence.CanCloseFence())
 			{
 				// Check if interact anywhere is enabled
-				if (GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
+				if (GetZenComboLocksConfig().ClientSyncConfig && GetZenComboLocksConfig().ClientSyncConfig.InteractAnywhere)
 					return true;
 			}
 		}
